@@ -119,7 +119,7 @@ EOF
 
 cat > /etc/docker/daemon.json <<EOF
 {
-  "registry-mirrors" : ["http://2595fda0.m.daocloud.io"]
+  "registry-mirrors" : ["http://e280d684.m.daocloud.io"]
 }
 EOF
 
