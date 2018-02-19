@@ -61,7 +61,7 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node#{i}"
     ip = "172.17.8.#{i+100}"
     node.vm.network "private_network", ip: ip
-    node.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)", auto_config: true
+    node.vm.network "public_network", bridge: "ens33", auto_config: true
     #node.vm.synced_folder "/Users/DuffQiu/share", "/home/vagrant/share"
 
     node.vm.provider "virtualbox" do |vb|
