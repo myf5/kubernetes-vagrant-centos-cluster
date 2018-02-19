@@ -5,14 +5,14 @@ metadata:
   namespace: kube-system
 spec:
   rules:
-  - host: traefik.jimmysong.io
+  - host: traefik.myf5.net
     http:
       paths:
       - path: /
         backend:
           serviceName: traefik-ingress-service
           servicePort: 8080
-  - host: grafana.jimmysong.io
+  - host: grafana.myf5.net
     http:
       paths:
       - path: /
