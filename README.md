@@ -55,7 +55,7 @@ cd kubernetes-vagrant-centos-cluster
 vagrant up
 ```
 ***NOTE: The vagrant file is using local k8s client and server release package. So you need manually download the files and put it in the kubenetes-vagrant-centos-cluster directory.  
-IF YOU ARE NOT IN CHINA, PLS EDIT THE VAGRANT FILE TO DOWNLOAD THE FIELS AUTOMATICALLY.
+IF YOU ARE NOT IN CHINA, PLS EDIT THE VAGRANT FILE TO DOWNLOAD THE FIELS AUTOMATICALLY.***
 
 Wait about 10 minutes the kubernetes cluster will be setup automatically.
 
