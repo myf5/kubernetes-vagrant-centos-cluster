@@ -128,10 +128,10 @@ kubectl apply -f addon/traefik-ingress
 在本地`/etc/hosts`中增加一条配置：
 
 ```ini
-172.17.8.102 traefik.jimmysong.io
+172.17.8.102 traefik.myf5.net
 ```
 
-访问Traefik UI：<http://traefik.jimmysong.io>
+访问Traefik UI：<http://traefik.myf5.net>
 
 **EFK**
 
