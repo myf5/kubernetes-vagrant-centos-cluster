@@ -69,7 +69,7 @@ Vagrant.configure("2") do |config|
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-      vb.memory = "3072"
+      vb.memory = "2048"
       vb.cpus = 1
       vb.name = "node#{i}"
     end
