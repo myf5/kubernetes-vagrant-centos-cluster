@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: f5-hello-world
-  namespace: f5-configmap-ns
+  namespace: default
 spec:
   replicas: 2
   template:
@@ -24,7 +24,7 @@ metadata:
     location: f5
     f5-svc: f5helloworldservice
   name: f5-hello-word-service
-  namespace: f5-configmap-ns
+  namespace: default
 spec:
   type: NodePort
   ports:
