@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: traefik-ingress
-  namespace: kube-system
+  namespace: default
 spec:
   rules:
   - host: traefik.myf5.net
@@ -19,3 +19,10 @@ spec:
         backend:
           serviceName: monitoring-grafana
           servicePort: 80
+  - host: hello.myf5.net
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: f5-hello-word-service
+          servicePort: 8080

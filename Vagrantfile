@@ -61,6 +61,10 @@ Vagrant.configure("2") do |config|
     node.vm.hostname = "node#{i}"
     ip = "172.17.8.#{i+100}"
     node.vm.network "private_network", ip: ip
+    #Please set correct interface name for below.
+    #Suggest set to an interface that is connected to NAT virtual interface if you are 
+    #setting this k8s environment in a vm.  
+    # Internet---NAT interface in your VM(ens33)---bridge to your virtual box
     node.vm.network "public_network", bridge: "ens33", auto_config: true
     #node.vm.synced_folder "/Users/DuffQiu/share", "/home/vagrant/share"
 
@@ -264,7 +268,9 @@ EOF
           kubectl -n kube-system describe secret `kubectl -n kube-system get secret|grep admin-token|cut -d " " -f1`|grep "token:"|tr -s " "|cut -d " " -f2
           echo "login to dashboard with the above token"
           echo https://172.17.8.101:`kubectl -n kube-system get svc kubernetes-dashboard -o=jsonpath='{.spec.ports[0].port}'`
-          echo "install traefik ingress controller"
+          echo "Deploy f5 hello world application"
+          kubectl apply -f /vargrant/addon/f5-hello-world/f5-hello-world-app.yaml
+          echo "install traefik ingress controller and publish F5 hello world to traefik"
           kubectl apply -f /vagrant/addon/traefik-ingress/
         fi
 

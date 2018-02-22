@@ -26,7 +26,6 @@ metadata:
   name: f5-hello-word-service
   namespace: default
 spec:
-  type: NodePort
   ports:
   - port: 8080
     targetPort: 8080
