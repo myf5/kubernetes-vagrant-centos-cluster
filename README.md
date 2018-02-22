@@ -13,7 +13,8 @@
 - 8G以上内存
 - Vagrant 2.0+
 - Virtualbox 5.0 +
-- 提前下载kubernetes1.9.1以上版本的release压缩包
+- 提前下载kubernetes1.9.1以上版本的release压缩包.下载地址：
+`链接: https://pan.baidu.com/s/1jJyVoTC 密码: dc9x`
 
 **[vagrant及vritualbox安装准备请查看](K8s and istio quick installation on centos7.md)**
 
