@@ -56,10 +56,14 @@ cd kubernetes-vagrant-centos-cluster
 vagrant up
 ```
 
-**注意**：克隆完Git仓库后，需要提前下载kubernetes的压缩包到`kubenetes-vagrant-centos-cluster`目录下，包括如下两个文件：
+**注意**：克隆完Git仓库后，在执行`vagrant up`需要提前下载kubernetes的压缩包到`kubenetes-vagrant-centos-cluster`目录下，包括如下两个文件：
 
 - kubernetes-client-linux-amd64.tar.gz
 - kubernetes-server-linux-amd64.tar.gz
+
+
+下载地址：
+`链接: https://pan.baidu.com/s/1jJyVoTC 密码: dc9x`
 
 如果是首次部署，会自动下载`centos/7`的box，这需要花费一些时间，另外每个节点还需要下载安装一系列软件包，整个过程大概需要10几分钟。
 
@@ -102,6 +106,7 @@ kubectl -n kube-system describe secret `kubectl -n kube-system get secret|grep a
 **Heapster监控**
 
 创建Heapster监控：
+**注意：** 如果虚机内存较小，没有必要开启该监控服务
 
 ```bash
 kubectl apply -f addon/heapster/
@@ -112,10 +117,10 @@ kubectl apply -f addon/heapster/
 使用Ingress方式暴露的服务，在本地`/etc/hosts`中增加一条配置：
 
 ```ini
-172.17.8.102 grafana.jimmysong.io
+172.17.8.102 grafana.myf5.net
 ```
 
-访问Grafana：<http://grafana.jimmysong.io>
+访问Grafana：<http://grafana.myf5.net>
 
 **Traefik**
 
@@ -142,6 +147,15 @@ kubectl apply -f addon/efk/
 ```
 
 **注意**：运行EFK的每个节点需要消耗很大的CPU和内存，请保证每台虚拟机至少分配了4G内存。
+
+### F5 Hello World Application
+
+系统已自动安装，修改本地(virtualbox的宿主机，也就是你自己电脑中的虚机)hosts
+
+```ini
+172.17.8.102  hello.myf5.net
+```
+访问http://hello.myf5.net/
 
 ### Service Mesh
 
