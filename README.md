@@ -15,6 +15,8 @@
 - Virtualbox 5.0 +
 - 提前下载kubernetes1.9.1以上版本的release压缩包
 
+**[vagrant及vritualbox安装准备请查看](K8s and istio quick installation on centos7.md)**
+
 ## 集群
 
 我们使用Vagrant和Virtualbox安装包含3个节点的kubernetes集群，其中master节点同时作为node节点。
