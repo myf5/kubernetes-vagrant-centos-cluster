@@ -1,77 +1,91 @@
-# Setting up a kubernetes cluster with Vagrant and Virtualbox
+# 使用Vagrant和Virtualbox搭建Kubernetes集群
 
-[中文](README-cn.md)
+[English Version Click Here](README-en.md)
 
-Using vagrant file to build a kubernetes cluster which consists of 1 master(also as node) and 3 nodes. You don't have to create complicated ca files or configuration.
+当我们需要在本地开发时，更希望能够有一个开箱即用又可以方便定制的分布式开发环境，这样才能对Kubernetes本身和应用进行更好的测试。现在我们使用[Vagrant](https://www.vagrantup.com/)和[VirtualBox](https://www.virtualbox.org/wiki/Downloads)来创建一个这样的环境。
 
-### Why don't do that with kubeadm
+**注意**：kube-proxy使用ipvs模式。
 
-Because I want to setup the etcd, apiserver, controller, scheduler without docker container.
+## 准备环境
 
-### Architecture
+需要准备以下软件和环境：
 
-We will create a Kubernetes 1.9.1+ cluster with 3 nodes which contains the components below:
+- 8G以上内存
+- Vagrant 2.0+
+- Virtualbox 5.0 +
+- 提前下载kubernetes1.9.1以上版本的release压缩包
 
-| IP           | Hostname | Componets                                |
-| ------------ | -------- | ---------------------------------------- |
-| 172.17.8.101 | node1    | kube-apiserver, kube-controller-manager, kube-scheduler, etcd, kubelet, docker, flannel, dashboard |
-| 172.17.8.102 | node2    | kubelet, docker, flannel、traefik         |
-| 172.17.8.103 | node3    | kubelet, docker, flannel                 |
+## 集群
 
-The default setting will create the private network from 172.17.8.101 to 172.17.8.103 for nodes, and it will use the host's DHCP for the public ip.
+我们使用Vagrant和Virtualbox安装包含3个节点的kubernetes集群，其中master节点同时作为node节点。
 
-The kubernetes service's vip range is `10.254.0.0/16`.
+| IP           | 主机名   | 组件                                       |
+| ------------ | ----- | ---------------------------------------- |
+| 172.17.8.101 | node1 | kube-apiserver、kube-controller-manager、kube-scheduler、etcd、kubelet、docker、flannel、dashboard |
+| 172.17.8.102 | node2 | kubelet、docker、flannel、traefik           |
+| 172.17.8.103 | node3 | kubelet、docker、flannel                   |
 
-The container network range is `170.33.0.0/16` owned by flanneld with `host-gw` backend.
+**注意**：以上的IP、主机名和组件都是固定在这些节点的，即使销毁后下次使用vagrant重建依然保持不变。
 
-`kube-proxy` will use `ipvs` mode.
+容器IP范围：172.33.0.0/30
 
-### Usage
+Kubernetes service IP范围：10.254.0.0/16
 
-#### Prerequisite
-* Host server with 8G+ mem(More is better), 60G disk, 8 core cpu at lease
-* vagrant 2.0+
-* virtualbox 5.0+
-* Maybe need to access the internet through GFW to download the kubernetes files
+## 安装的组件
 
-### Support Addon
+安装完成后的集群包含以下组件：
 
-**Required**
-
+- flannel（`host-gw`模式）
+- kubernetes dashboard 1.8.2
+- etcd（单节点）
+- kubectl
 - CoreDNS
-- Dashboard
-- Traefik
+- kubernetes（版本根据下载的kubernetes安装包而定）
 
-**Optional**
+**可选插件**
 
-- Heapster + InfluxDB + Grafana
+- Heapster + InfluxDB  + Grafana
 - ElasticSearch + Fluentd + Kibana
 - Istio service mesh
 
-#### Setup
+## 部署
+
+确保安装好以上的准备环境后，执行下列命令启动kubernetes集群：
+
 ```bash
 git clone https://github.com/rootsongjc/kubernetes-vagrant-centos-cluster.git
 cd kubernetes-vagrant-centos-cluster
 vagrant up
 ```
-***NOTE: The vagrant file is using local k8s client and server release package. So you need manually download the files and put it in the kubenetes-vagrant-centos-cluster directory BEFORE RUNNING `vagrant up`.  
-IF YOU ARE NOT IN CHINA, PLS EDIT THE VAGRANT FILE TO DOWNLOAD THE FIELS AUTOMATICALLY FROM INERNET.***
 
-Wait about 10 minutes the kubernetes cluster will be setup automatically.
+**注意**：克隆完Git仓库后，在执行`vagrant up`需要提前下载kubernetes的压缩包到`kubenetes-vagrant-centos-cluster`目录下，包括如下两个文件：
 
-#### Connect to kubernetes cluster
+- kubernetes-client-linux-amd64.tar.gz
+- kubernetes-server-linux-amd64.tar.gz
 
-There are 3 ways to access the kubernetes cluster.
 
-**local**
+下载地址：
+`链接: https://pan.baidu.com/s/1jJyVoTC 密码: dc9x`
 
-Copy `conf/admin.kubeconfig` to `~/.kube/config`, using `kubectl` CLI to access the cluster.
+如果是首次部署，会自动下载`centos/7`的box，这需要花费一些时间，另外每个节点还需要下载安装一系列软件包，整个过程大概需要10几分钟。
 
-We recommend this way.
+## 访问kubernetes集群
 
-**VM**
+访问Kubernetes集群的方式有三种：
 
-Login to the virtual machine to access and debug the cluster.
+- 本地访问
+- 在VM内部访问
+- kubernetes dashboard
+
+**通过本地访问**
+
+可以直接在你自己的本地环境中操作该kubernetes集群，而无需登录到虚拟机中，执行以下步骤：
+
+将`conf/admin.kubeconfig`文件放到`~/.kube/config`目录下即可在本地使用`kubectl`命令操作集群。
+
+**在虚拟机内部访问**
+
+如果有任何问题可以登录到虚拟机内部调试：
 
 ```bash
 vagrant ssh node1
@@ -79,126 +93,126 @@ sudo -i
 kubectl get nodes
 ```
 
-**Kubernetes dashbaord**
+**Kubernetes dashboard**
 
-Kubernetes dashboard URL: <https://172.17.8.101:8443>
+还可以直接通过dashboard UI来访问：https://172.17.8.101:8443
 
-Get the token:
+可以在本地执行以下命令获取token的值（需要提前安装kubectl）：
 
 ```bash
 kubectl -n kube-system describe secret `kubectl -n kube-system get secret|grep admin-token|cut -d " " -f1`|grep "token:"|tr -s " "|cut -d " " -f2
 ```
 
-**Note**: You can see the token message from `vagrant up` logs.
+**注意**：token的值也可以在`vagrant up`的日志的最后看到。
 
-## Components
+**Heapster监控**
 
-**Heapster monitoring**
-
-Run this command on you local machine.
+创建Heapster监控：
+**注意：** 如果虚机内存较小，没有必要开启该监控服务
 
 ```bash
 kubectl apply -f addon/heapster/
 ```
 
-Append the following item to you local `/etc/hosts` file.
+访问Grafana
+
+使用Ingress方式暴露的服务，在本地`/etc/hosts`中增加一条配置：
 
 ```ini
 172.17.8.102 grafana.myf5.net
 ```
 
-Open the URL in your browser: <http://grafana.myf5.net>
+访问Grafana：<http://grafana.myf5.net>
 
-**Treafik ingress**
+**Traefik**
 
-Run this command on you local machine.
+部署Traefik ingress controller和增加ingress配置：
 
 ```bash
 kubectl apply -f addon/traefik-ingress
 ```
 
-Append the following item to you local `/etc/hosts` file.
+在本地`/etc/hosts`中增加一条配置：
 
 ```ini
 172.17.8.102 traefik.myf5.net
 ```
 
-Traefik UI URL: <http://traefik.myf5.net>
+访问Traefik UI：<http://traefik.myf5.net>
 
-**F5 Hello World Application**
+**EFK**
 
-Append the following item to you local `/etc/hosts` file.
+使用EFK做日志收集。
+
+```bash
+kubectl apply -f addon/efk/
+```
+
+**注意**：运行EFK的每个节点需要消耗很大的CPU和内存，请保证每台虚拟机至少分配了4G内存。
+
+### F5 Hello World Application
+
+系统已自动安装，修改本地(virtualbox的宿主机，也就是你自己电脑中的虚机)hosts
 
 ```ini
 172.17.8.102  hello.myf5.net
 ```
-Access: http://hello.myf5.net/
-
-**EFK**
-
-Run this command on your local machine.
-
-```bash
-kubectl apply -f addon/heapster/
-```
-
-**Note**: Powerful CPU and memory allocation required. At least 4G per virtual machine.
+访问http://hello.myf5.net/
 
 ### Service Mesh
 
-We use [istio](https://istio.io) as the default service mesh.
+我们使用 [istio](https://istio.io) 作为 service mesh。
 
-**Installation**
+**安装**
 
 ```bash
 kubectl apply -f addon/istio/
 ```
 
-**Run sample**
+**运行示例**
 
 ```bash
 kubectl apply -f yaml/istio-bookinfo
 kubectl apply -n default -f <(istioctl kube-inject -f yaml/istio-bookinfo/bookinfo.yaml)
 ```
 
-More detail see https://istio.io/docs/guides/bookinfo.html
+详细信息请参阅 https://istio.io/docs/guides/bookinfo.html
 
-### Operation
+### 管理
 
-Execute the following commands under the current git repo root directory.
+以下命令都在当前的repo目录下操作。
 
-**Suspend**
+**挂起**
 
-Suspend the current state of VMs.
+将当前的虚拟机挂起，以便下次恢复。
 
 ```bash
 vagrant suspend
 ```
 
-**Resume**
+**恢复**
 
-Resume the last state of VMs.
+恢复虚拟机的上次状态。
 
 ```bash
 vagrant resume
 ```
 
-**Clean**
+**清理**
 
-Clean up the VMs.
+清理虚拟机。
 
 ```bash
 vagrant destroy
 rm -rf .vagrant
 ```
 
-#### Note
+### 注意
 
-Don't use it in production environment.
+不要在生产环境使用该项目。
 
-### Reference
+## 参考
 
-* [Kubernetes Handbook - jimmysong.io](https://jimmysong.io/kubernetes-handbook/)
-* [duffqiu/centos-vagrant](https://github.com/duffqiu/centos-vagrant)
-* [kubernetes ipvs](https://github.com/kubernetes/kubernetes/tree/master/pkg/proxy/ipvs)
-
+- [Kubernetes handbook - jimmysong.io](https://jimmysong.io/kubernetes-handbook)
+- [duffqiu/centos-vagrant](https://github.com/duffqiu/centos-vagrant)
+- [Kubernetes 1.8 kube-proxy 开启 ipvs](https://mritd.me/2017/10/10/kube-proxy-use-ipvs-on-kubernetes-1.8/#%E4%B8%80%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87)
