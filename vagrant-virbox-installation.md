@@ -49,7 +49,7 @@
    vi Vagrantfile
    找到
    node.vm.network "public_network", bridge: "ens33", auto_config: true
-   将bridge后面的网卡名称修改为你的虚机或者物理机网卡名称(可以上互联网的)
+   将bridge后面的网卡名称修改为你的虚机或者物理机网卡名称(可以上互联网的)，如果是虚机，建议虚机通过NAT网络到物理机网卡，然后virtualbox中的public_network再桥接到该虚机网卡，这样可以避免物理机网卡接口地址变化导致etcd中关于flannel的配置出现问题
    ```
 
 7. 下载k8s 二进制服务端和客户端，此处需要翻墙，将下载的文件保存在kubernetes-vagrant-centos-cluster目录下

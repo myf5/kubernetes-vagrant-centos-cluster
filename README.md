@@ -53,12 +53,10 @@ Kubernetes service IP范围：10.254.0.0/16
 
 ## 部署
 
-确保安装好以上的准备环境后，执行下列命令启动kubernetes集群：
+**确保安装好以上的准备环境后，执行下列命令clone仓库** 
 
 ```bash
 git clone https://github.com/rootsongjc/kubernetes-vagrant-centos-cluster.git
-cd kubernetes-vagrant-centos-cluster
-vagrant up
 ```
 
 **注意**：克隆完Git仓库后，在执行`vagrant up`需要提前下载kubernetes的压缩包到`kubenetes-vagrant-centos-cluster`目录下，包括如下两个文件：
@@ -66,9 +64,19 @@ vagrant up
 - kubernetes-client-linux-amd64.tar.gz
 - kubernetes-server-linux-amd64.tar.gz
 
-
 下载地址：
 `链接: https://pan.baidu.com/s/1jJyVoTC 密码: dc9x`
+
+**修改Vagrantfile内容**
+
+请参考：[这里](vagrant-virbox-installation.md)
+
+**启动集群**
+
+```bash
+cd kubernetes-vagrant-centos-cluster
+vagrant up
+```
 
 如果是首次部署，会自动下载`centos/7`的box，这需要花费一些时间，另外每个节点还需要下载安装一系列软件包，整个过程大概需要10几分钟。
 
