@@ -272,6 +272,8 @@ EOF
           kubectl apply -f /vargrant/addon/f5-hello-world/f5-hello-world-app.yaml
           echo "install traefik ingress controller and publish F5 hello world to traefik"
           kubectl apply -f /vagrant/addon/traefik-ingress/
+          echo "install f5 admin secrets into k8s"
+          kubectl create secret generic bigip-login --namespace kube-system --from-literal=username=admin --from-literal=password=admin
         fi
 
       SHELL
