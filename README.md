@@ -34,6 +34,9 @@
 
 Kubernetes service IP范围：10.254.0.0/16
 
+## 网络拓扑
+<img src="https://github.com/myf5/kubernetes-vagrant-centos-cluster/blob/master/topology.jpeg?raw=true">
+
 ## 安装的组件
 
 安装完成后的集群包含以下组件：
