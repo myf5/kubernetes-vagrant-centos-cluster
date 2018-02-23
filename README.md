@@ -180,6 +180,78 @@ kubectl apply -f addon/efk/
 ```
 访问http://hello.myf5.net/
 
+### F5 BIGIP K8S CONTROLLER集成
+注意：此步骤需在部署上述“F5 hello world application”工作之后执行
+
+* BIGIP准备工作
+ * 额外创建一个BIGIP，确保k8s node可以和BIGIP通信。本demo中，将BIGIP的一个接口放置在fusion虚拟网络的NAT网络中，node的eth2接口也同样桥接到了fusion的NAT网络。例如BIGIP的self ip为 172.16.150.245/24
+ * 在node上ping BIGIP self ip，确认可以通信
+ * BIGIP上创建一个新的partition，命名为k8s
+* 执行以下命令，创建bigip CC集成，以下命令将同时创建一个configmap实现在bigip上的业务发布
+
+```bash
+kubectl create -f addon/f5/
+```
+登陆BIGIP确认k8s partition下产生类似如下服务
+
+```
+root@(v13)(cfg-sync Standalone)(Active)(/k8s)(tmos)# list ltm virtual
+ltm virtual default_k8s.vs {
+    destination 192.168.188.188%0:http
+    ip-protocol tcp
+    mask 255.255.255.255
+    partition k8s
+    pool cfgmap_default_k8s.vs_f5-hello-word-service
+    profiles {
+        /Common/http { }
+        /Common/tcp { }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vs-index 6
+}
+root@(v13)(cfg-sync Standalone)(Active)(/k8s)(tmos)# list ltm pool
+ltm pool cfgmap_default_k8s.vs_f5-hello-word-service {
+    members {
+        172.33.21.4%0:webcache {
+            address 172.33.21.4
+            session monitor-enabled
+            state down
+        }
+        172.33.81.3%0:webcache {
+            address 172.33.81.3
+            session monitor-enabled
+            state down
+        }
+    }
+    monitor cfgmap_default_k8s.vs_f5-hello-word-service_0_http 
+    partition k8s
+}
+ltm pool ingress_default_f5-hello-word-service {
+    members {
+        172.33.21.4%0:webcache {
+            address 172.33.21.4
+        }
+        172.33.81.3%0:webcache {
+            address 172.33.81.3
+        }
+    }
+    partition k8s
+}
+ltm pool ingress_default_traefik-ingress-service {
+    members {
+        172.17.8.102%0:webcache {
+            address 172.17.8.102
+        }
+    }
+    partition k8s
+}
+```
+
 ### Service Mesh
 
 我们使用 [istio](https://istio.io) 作为 service mesh。
