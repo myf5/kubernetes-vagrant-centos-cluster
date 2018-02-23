@@ -264,6 +264,7 @@ ltm pool ingress_default_traefik-ingress-service {
     partition k8s
 }
 ```
+**注意上述配置未包含路由问题，实际member可能为down，请根据实际网络环境配置BIGIP到达pod网络以及node网络的路由** 
 
 ### Service Mesh
 
