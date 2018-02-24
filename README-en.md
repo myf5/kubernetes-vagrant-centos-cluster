@@ -68,9 +68,16 @@ node.vm.network "public_network", bridge: "ens33", auto_config: true
 
 Wait about 10 minutes the kubernetes cluster will be setup automatically.
 
+
 **Post Work**
 
-Pls check the eth2 ip in each nodes, and set it to static manually, this will help to avoid flannel issue that caused by dynamic host-gw ip.
+Pls check the eth2 ip in each nodes, and set it to static manually, this will help to avoid flannel issue that caused by dynamic host-gw ip. For example:
+
+```
+cd kubernetes-vagrant-centos-cluster
+vagrant ssh node 1
+node1# nmtui
+```
 
 #### Connect to kubernetes cluster
 
