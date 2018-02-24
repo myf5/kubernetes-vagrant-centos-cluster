@@ -57,8 +57,14 @@ git clone https://github.com/rootsongjc/kubernetes-vagrant-centos-cluster.git
 cd kubernetes-vagrant-centos-cluster
 vagrant up
 ```
-***NOTE: The vagrant file is using local k8s client and server release package. So you need manually download the files and put it in the kubenetes-vagrant-centos-cluster directory BEFORE RUNNING `vagrant up`.  
+***NOTE 1: The current vagrant file is using local k8s client and server release package. So you need manually download the files and put it in the kubenetes-vagrant-centos-cluster directory BEFORE RUNNING `vagrant up`.  
 IF YOU ARE NOT IN CHINA, PLS EDIT THE VAGRANT FILE TO DOWNLOAD THE FIELS AUTOMATICALLY FROM INERNET.***
+
+***NOTE 2: Also pls edit the bridge network setting before running vagrant up, like:***
+
+```
+node.vm.network "public_network", bridge: "ens33", auto_config: true
+```
 
 Wait about 10 minutes the kubernetes cluster will be setup automatically.
 
